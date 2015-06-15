@@ -30,11 +30,18 @@ def addIV(MSGS,m):
     IV = Random.new().read(16)
     MSGS[m]=IV.encode('hex')+"" + MSGS[m]
 
-def padd(IV,msg):
+def padd(msg):
+    #Number of bytes
+    print "Padding"
     mess_length=len(msg)/2
+    print "Message length in bytes: " + str(mess_length)
+    
     IV_len=len(IV.encode('hex'))/2
+    print "IV length in bytes: " + str(IV_len)
     extra_bytes=mess_length%IV_len
+    print "Extra Bytes: " + str(extra_bytes)
     padd_bytes=IV_len-extra_bytes
+    print "Padd Bytes: " + str(padd_bytes)
     
     for x in range(0,padd_bytes):
         msg+="{:02x}".format(padd_bytes)
@@ -63,14 +70,14 @@ def main():
     print "Message: \t\t" + MSGS[0]    
 
     print "IV: \t\t\t" + IV.encode('hex')
-    prepared=padd(MSGS[0][0:32],MSGS[0])
+    prepared=padd(MSGS[0])
     print "Prepared Message: \t" + prepared
     print "KEY: \t\t\t" + key.encode('hex')
     
     print "My Encryption: \t\t" + encryption(prepared)
     
-    aes=AES.new(key,AES.MODE_CBC, MSGS[0][0:32].decode('hex'))
-    print "Python Encryption: \t" + MSGS[0][0:32] + aes.encrypt(prepared.decode('hex')).encode('hex')
+    aes=AES.new(key,AES.MODE_CBC, IV)
+    print "Python Encryption: \t" + IV.encode('hex') + aes.encrypt(prepared.decode('hex')).encode('hex')
 
     O = open('Encrypted Text.txt','w')    
     for msg in MSGS:
