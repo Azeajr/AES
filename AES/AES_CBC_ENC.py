@@ -8,13 +8,16 @@ key = Random.new().read(16)
 K = open('Encryption Key.txt','w')
 K.write(key.encode('hex') + "\n")
 
+IV = Random.new().read(16)
+I = open('IV.txt','w')
+I.write(IV.encode('hex') + "\n")
 
 MSGS = []
 ENC_MSGS=[]
-I = open('Messages.txt', 'r')
+M = open('Messages.txt', 'r')
     
-for line in I:
-    MSGS.append(line.rstrip('\n').encode('hex'))
+for line in M:
+    MSGS.append(IV.encode('hex') + line.rstrip('\n').encode('hex'))
 
 #Strings have to be decoded if the string is in hex
 def strxor(a, b):     # xor two strings of different lengths
@@ -57,23 +60,21 @@ def encryption(msg):
 
 
 def main():
-    print "Message: \t\t" + MSGS[0]
-
+    print "Message: \t\t" + MSGS[0]    
 
     print "IV: \t\t\t" + IV.encode('hex')
-    #addIV(MSGS,0)
-    prepared=padd(IV,MSGS[0])
+    prepared=padd(MSGS[0][0:32],MSGS[0])
     print "Prepared Message: \t" + prepared
     print "KEY: \t\t\t" + key.encode('hex')
     
     print "My Encryption: \t\t" + encryption(prepared)
     
-    aes=AES.new(key,AES.MODE_CBC, IV)
-    print "Python Encryption: \t" + IV.encode('hex') + aes.encrypt(prepared.decode('hex')).encode('hex')
+    aes=AES.new(key,AES.MODE_CBC, MSGS[0][0:32].decode('hex'))
+    print "Python Encryption: \t" + MSGS[0][0:32] + aes.encrypt(prepared.decode('hex')).encode('hex')
 
     O = open('Encrypted Text.txt','w')    
     for msg in MSGS:
-        O.write(encription(key, msg)+ "\n")
+        O.write(encryption(prepared)+ "\n")
     
 if __name__ == "__main__":
     main()
