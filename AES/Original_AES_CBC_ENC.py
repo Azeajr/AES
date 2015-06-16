@@ -26,10 +26,6 @@ def strxor(a, b):     # xor two strings of different lengths
     else:
         return "".join([chr(ord(x) ^ ord(y)) for (x, y) in zip(a, b[:len(a)])])
 
-def addIV(MSGS,m):
-    IV = Random.new().read(16)
-    MSGS[m]=IV.encode('hex')+"" + MSGS[m]
-
 def padd(msg):
     #Number of bytes
     print "Padding"
@@ -56,9 +52,8 @@ def cbc(previous, next):
 def encryption(msg):
     length = len(msg)
     num_mess = length/len(key.encode('hex'))
-    
-    temp=msg
-    
+ 
+    temp=msg[0:32]
     for x in range(0,num_mess):
         temp+=cbc(temp[x*32:(x+1)*32],msg[x*32:(x+1)*32])
 
