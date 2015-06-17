@@ -23,9 +23,9 @@ def padd(IV,msg):
     return msg
 
 def cbc(key,previous, next):
-    temp = strxor(previous.decode('hex'),next.decode('hex'))
+    #temp = strxor(previous.decode('hex'),next.decode('hex'))
     aes = AES.new(key)
-    return aes.encrypt(temp).encode('hex')
+    return aes.encrypt(strxor(previous.decode('hex'),next.decode('hex'))).encode('hex')
 
 def cbc_encryption():
     

@@ -22,42 +22,37 @@ def padd(IV,msg):
 
     return msg
 
-def cbc(key,previous, next):
-    temp = strxor(previous.decode('hex'),next.decode('hex'))
+def cbc_de(key,previous, next):
     aes = AES.new(key)
-    return aes.encrypt(temp).encode('hex')
-
-def cbc_encryption():
+    #temp = aes.decrypt(next).encode('hex')
     
-    key = Random.new().read(16)
-    K = open('Encryption Key.txt','w')
-    K.write(key.encode('hex') + "\n")
+    return strxor(previous.decode('hex'),aes.decrypt(next))
 
-    IV = Random.new().read(16)
-    I = open('IV.txt','w')
-    I.write(IV.encode('hex') + "\n")
-
-    #MSGS = []
-    #ENC_MSGS=[]
-    M = open('Message.txt', 'r')
-    msg=IV.encode('hex') + M.read().rstrip('\n').encode('hex')
+def cbc_decryption():
     
-    prepared=padd(IV,msg)
-    length = len(msg)
+    K = open('Encryption Key.txt','r')
+    key=K.read().rstrip('\n').decode('hex')
+
+    I = open('IV.txt','r')
+    IV=I.read().rstrip('\n').decode('hex')
+
+    O = open('Encrypted Text.txt','r')  
+    ct=O.read().rstrip('\n')
+
+    length = len(ct)
+    print len(ct)
+    print ct
     num_mess = length/len(key.encode('hex'))
- 
-    temp=msg[0:32]
+    
+    temp=""
     for x in range(0,num_mess):
-        temp+=cbc(key,temp[x*32:(x+1)*32],msg[x*32:(x+1)*32])
+        temp+=cbc_de(key,ct[x*32:(x+1)*32],ct[(x+1)*32:(x+2)*32])
 
     return temp
 
-
-
 def main():
-    O = open('Encrypted Text.txt','w')  
-    temp=cbc_encryption()
-    O.write(temp+ "\n")
+    D = open('Decrypted Text.txt','w')
+    D.write(cbc_decryption().encode('hex'))
     
 if __name__ == "__main__":
     main()
