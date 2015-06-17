@@ -31,28 +31,28 @@ def cbc_de(key,previous, next):
 def cbc_decryption():
     
     K = open('Encryption Key.txt','r')
-    key=K.read().rstrip('\n').decode('hex')
+    key=K.read().decode('hex')
 
     I = open('IV.txt','r')
-    IV=I.read().rstrip('\n').decode('hex')
+    IV=I.read().decode('hex')
 
     O = open('Encrypted Text.txt','r')  
-    ct=O.read().rstrip('\n')
+    ct=O.read()
 
     length = len(ct)
-    print len(ct)
-    print ct
     num_mess = length/len(key.encode('hex'))
     
     temp=""
     for x in range(0,num_mess):
         temp+=cbc_de(key,ct[x*32:(x+1)*32],ct[(x+1)*32:(x+2)*32])
 
+    print "Decrypted\t"+temp.encode('hex')
+    print "Encrypted\t"+ct
     return temp
 
 def main():
     D = open('Decrypted Text.txt','w')
-    D.write(cbc_decryption().encode('hex'))
+    D.write(cbc_decryption())
     
 if __name__ == "__main__":
     main()

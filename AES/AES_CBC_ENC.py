@@ -31,33 +31,36 @@ def cbc_encryption():
     
     key = Random.new().read(16)
     K = open('Encryption Key.txt','w')
-    K.write(key.encode('hex') + "\n")
+    K.write(key.encode('hex'))
 
     IV = Random.new().read(16)
     I = open('IV.txt','w')
-    I.write(IV.encode('hex') + "\n")
+    I.write(IV.encode('hex'))
 
     #MSGS = []
     #ENC_MSGS=[]
     M = open('Message.txt', 'r')
-    msg=IV.encode('hex') + M.read().rstrip('\n').encode('hex')
+    msg=IV.encode('hex') + M.read().encode('hex')
     
     prepared=padd(IV,msg)
+    print prepared
     length = len(msg)
     num_mess = length/len(key.encode('hex'))
  
     temp=msg[0:32]
-    for x in range(0,num_mess):
+    for x in range(0,num_mess+1):
         temp+=cbc(key,temp[x*32:(x+1)*32],msg[x*32:(x+1)*32])
 
+    print str(len(temp)/len(key.encode('hex')))
+    print str(len(msg)/len(key.encode('hex')))
+    
     return temp
 
 
 
 def main():
     O = open('Encrypted Text.txt','w')  
-    temp=cbc_encryption()
-    O.write(temp+ "\n")
+    O.write(cbc_encryption())
     
 if __name__ == "__main__":
     main()
