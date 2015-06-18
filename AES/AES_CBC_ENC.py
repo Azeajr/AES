@@ -43,16 +43,17 @@ def cbc_encryption():
     msg=IV.encode('hex') + M.read().encode('hex')
     
     prepared=padd(IV,msg)
-    print prepared
-    length = len(msg)
+
+    length = len(prepared)
     num_mess = length/len(key.encode('hex'))
  
-    temp=msg[0:32]
+    temp=prepared[0:32]
     for x in range(0,num_mess+1):
-        temp+=cbc(key,temp[x*32:(x+1)*32],msg[x*32:(x+1)*32])
+        temp+=cbc(key,temp[x*32:(x+1)*32],prepared[x*32:(x+1)*32])
 
-    print str(len(temp)/len(key.encode('hex')))
-    print str(len(msg)/len(key.encode('hex')))
+    aes=AES.new(key,AES.MODE_CBC, IV)
+    print "Python Encryption: \t" + IV.encode('hex') + aes.encrypt(prepared.decode('hex')).encode('hex')
+    print "My Encryption: \t\t" + temp
     
     return temp
 
